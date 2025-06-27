@@ -1,12 +1,16 @@
 import React from 'react';
-import ImageGallery from './Componets/ImageGallery';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Login from './Componets/login.jsx';
+import Gallery from './Componets/Gallery.jsx'; // Add this import
 
 function App() {
   return (
-    <div>
-      <h1>📷 Image Gallery</h1>
-      <ImageGallery />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/gallery" element={<Gallery />} /> {/* Add this route */}
+      </Routes>
+    </Router>
   );
 }
 
