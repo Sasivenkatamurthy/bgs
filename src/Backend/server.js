@@ -1,10 +1,10 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import { account, storage, ID } from './appwrite.js'; 
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 const app = express();
 const PORT = 4000;

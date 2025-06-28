@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import { Client, Account, ID, Storage } from "appwrite";
 
 const client = new Client();
