@@ -6,7 +6,7 @@ function Gallery() {
     const [hoveredIdx, setHoveredIdx] = useState(null);
 
     useEffect(() => {
-        fetch('http://localhost:4000/api/user-images')
+        fetch(`${process.env.REACT_APP_BGSBackend_URI}/api/user-images`)
             .then(res => res.json())
             .then(data => setImages(data.images || []));
     }, []);

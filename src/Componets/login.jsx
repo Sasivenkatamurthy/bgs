@@ -67,7 +67,7 @@ useEffect(() => {
     // Register user
     const handleRegister = async () => {
         try {
-            const res = await fetch('http://localhost:4000/api/save-user', {
+            const res = await fetch(`${process.env.REACT_APP_BGSBackend_URI}/api/save-user`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: form.name, email: form.email })
@@ -87,7 +87,7 @@ useEffect(() => {
     // Send OTP
     const handleSendOtp = async () => {
         try {
-            const res = await fetch('http://localhost:4000/api/send-otp', {
+            const res = await fetch(`${process.env.REACT_APP_BGSBackend_URI}/api/send-otp`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: form.email })
@@ -111,7 +111,7 @@ useEffect(() => {
     const handleVerifyOtp = async e => {
         e.preventDefault();
         try {
-            const res = await fetch('http://localhost:4000/api/verify-otp', {
+            const res = await fetch(`${process.env.REACT_APP_BGSBackend_URI}/api/verify-otp`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -144,7 +144,7 @@ useEffect(() => {
     // Fetch images after successful login
     useEffect(() => {
         if (step === 4) {
-            fetch('http://localhost:4000/api/user-images')
+            fetch(`${process.env.REACT_APP_BGSBackend_URI}/api/user-images`)
                 .then(res => res.json())
                 .then(data => setImages(data.images || []));
         }
