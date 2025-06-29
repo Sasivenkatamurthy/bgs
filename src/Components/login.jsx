@@ -414,7 +414,7 @@ function Login() {
                         </>
                     )}
                     {step === 4 && (
-                        <div style={{ marginTop: 0, color: '#2e7d32', fontWeight: 700, width: '100vw', maxWidth: '100vw', padding: 0, marginLeft: '-110%', marginRight: 0, marginBottom: 0, height: '100vh' }}>
+                        <div style={{ marginTop: 0, color: '#2e7d32', fontWeight: 700, width: '100vw', maxWidth: '100vw', padding: 0, marginLeft: 0, marginRight: 0, marginBottom: 0, height: '100vh' }}>
                             {/* Display images in a grid */}
                             <div
                                 style={{

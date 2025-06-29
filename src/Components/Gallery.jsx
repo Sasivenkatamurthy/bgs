@@ -82,7 +82,7 @@ function Gallery() {
                     <div>No images uploaded yet.</div>
                 )}
             </div>
-            <style>
+            {/* <style>
                 {`
             .gallery-root {
                 min-height: 100vh;
@@ -128,7 +128,7 @@ function Gallery() {
                 }
             }
             `}
-            </style>
+            </style> */}
         </div>
     );
 }
