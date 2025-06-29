@@ -35,7 +35,7 @@ function Gallery() {
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 position: 'relative',
-                                background: '#fff',
+                                background: '#FFFFFF',
                                 borderRadius: 10,
                                 boxShadow: '0 2px 12px #0001',
                                 overflow: 'hidden',
@@ -87,7 +87,7 @@ function Gallery() {
             .gallery-root {
                 min-height: 100vh;
                 width: 100vw;
-                background: linear-gradient(135deg, #f8fafc 0%, #e3ecf7 100%);
+                background: transparent;
                 display: flex;
                 align-items: center;
                 justify-content: center;
