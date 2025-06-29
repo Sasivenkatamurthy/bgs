@@ -20,6 +20,41 @@ function Gallery() {
             alignItems: 'center',
             justifyContent: 'center'
         }}>
+            <style>
+                {`
+                .gallery-grid {
+                    display: grid;
+                    grid-template-columns: repeat(3, 1fr);
+                    gap: 16px;
+                    width: 90vw;
+                    max-width: 1200px;
+                    margin: 0 auto;
+                }
+                @media (max-width: 900px) {
+                    .gallery-grid {
+                        grid-template-columns: repeat(2, 1fr);
+                    }
+                }
+                @media (max-width: 600px) {
+                    .gallery-grid {
+                        grid-template-columns: 1fr;
+                    }
+                }
+                .gallery-item {
+                    position: relative;
+                    aspect-ratio: 2/3;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .gallery-img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    border-radius: 8px;
+                }
+                `}
+            </style>
             <div style={{
                 marginTop: 0,
                 color: '#2e7d32',
@@ -29,47 +64,19 @@ function Gallery() {
                 padding: 0,
                 marginBottom: 190
             }}>
-                <div
-                    style={{
-                        display: 'flex',
-                        flexWrap: 'wrap',
-                        gap: 16,
-                        justifyContent: 'center',
-                        width: '100vw',
-                        maxHeight: '60vh',
-                        overflowY: 'auto',
-                        boxSizing: 'border-box',
-                        padding: '0 2vw'
-                    }}
-                >
+                <div className="gallery-grid">
                     {images.length > 0 ? (
                         images.map((img, idx) => (
                             <div
                                 key={idx}
-                                style={{
-                                    position: 'relative',
-                                    width: '200px',
-                                    height: '600px',
-                                    flex: '0 0 calc(25% - 16px)',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}
+                                className="gallery-item"
                                 onMouseEnter={() => setHoveredIdx(idx)}
                                 onMouseLeave={() => setHoveredIdx(null)}
                             >
                                 <img
                                     src={img}
                                     alt="User upload"
-                                    style={{
-                                        width: '100%',
-                                        height: '100%',
-                                        objectFit: 'cover',
-                                        borderRadius: 8,
-                                        marginBottom: 10,
-                                        maxWidth: '100%',
-                                        minWidth: 0
-                                    }}
+                                    className="gallery-img"
                                 />
                                 {hoveredIdx === idx && (
                                     <a

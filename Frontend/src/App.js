@@ -1,14 +1,14 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from './Componets/login.jsx';
-import Gallery from './Componets/Gallery.jsx'; // Add this import
+import Login from './Components/login.jsx';
+import Gallery from './Components/Gallery.jsx'; 
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/gallery" element={<Gallery />} /> {/* Add this route */}
+        <Route path="/gallery" element={<Gallery />} />
       </Routes>
     </Router>
   );

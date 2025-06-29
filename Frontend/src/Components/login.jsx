@@ -1,5 +1,7 @@
 import React, { useState, useEffect, } from 'react';
 import { DownloadSimple } from "@phosphor-icons/react";
+import ganesh from '../assests/ganesh-desktop.jpg'
+
 
 function Login() {
     const [step, setStep] = useState(() => {
@@ -15,7 +17,8 @@ function Login() {
     const [images, setImages] = useState([]);
     const [hoveredIdx, setHoveredIdx] = useState(null);
     const [showPopup, setShowPopup] = useState(false);
-
+    const [loading, setLoading] = useState(false);
+    const [popupMessage, setPopupMessage] = useState('');
     const handleChange = e => {
         const { name, value } = e.target;
         setForm({ ...form, [name]: value });
@@ -25,25 +28,34 @@ function Login() {
     const [resendAvailable, setResendAvailable] = useState(false);
     const handleResendOtp = async () => {
         await handleSendOtp();
+        setForm(f => ({ ...f, otp: '' }));
     };
     // Start/restart OTP timer when step 3 is entered
-useEffect(() => {
-    let timer;
-    if (step === 3 && !resendAvailable) {
-        timer = setInterval(() => {
-            setOtpTimer(prev => {
-                if (prev <= 1) {
-                    clearInterval(timer);
-                    setResendAvailable(true);
-                    return 0;
-                }
-                return prev - 1;
-            });
-        }, 1000);
-    }
-    return () => clearInterval(timer);
-}, [step, resendAvailable]);
-
+    useEffect(() => {
+        let timer;
+        if (step === 3 && !resendAvailable) {
+            timer = setInterval(() => {
+                setOtpTimer(prev => {
+                    if (prev <= 1) {
+                        clearInterval(timer);
+                        setResendAvailable(true);
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+        }
+        return () => clearInterval(timer);
+    }, [step, resendAvailable]);
+    useEffect(() => {
+        if (step === 4) {
+            fetch(`${process.env.REACT_APP_BGSBackend_URI}/api/user-images`)
+                .then(res => res.json())
+                .then(data => setImages(data.images || []));
+        } else {
+            setImages([]);
+        }
+    }, [step]);
     // Synchronize step with browser history
     useEffect(() => {
         // On initial mount, replace state
@@ -56,7 +68,15 @@ useEffect(() => {
         // Listen for back/forward navigation
         const onPopState = (event) => {
             if (event.state && typeof event.state.step === 'number') {
-                setStep(event.state.step);
+                if (step === 4) {
+                    setStep(1);
+                    setForm({ name: '', email: '', otp: '' });
+                    setUserId('');
+                    sessionStorage.setItem('step', 1);
+                    sessionStorage.setItem('form', JSON.stringify({ name: '', email: '', otp: '' }));
+                } else {
+                    setStep(event.state.step);
+                }
             } else {
                 setStep(1);
             }
@@ -66,6 +86,7 @@ useEffect(() => {
     }, [step]);
     // Register user
     const handleRegister = async () => {
+        setLoading(true);
         try {
             const res = await fetch(`${process.env.REACT_APP_BGSBackend_URI}/api/save-user`, {
                 method: 'POST',
@@ -74,14 +95,16 @@ useEffect(() => {
             });
             const data = await res.json();
             if (data.status === 'success') {
-                setStep(2);
-                setMessage('Registered! Now send OTP to your email.');
+                setPopupMessage('OTP sent to your email.');
+                await handleSendOtp();
             } else {
                 setMessage(data.message || 'Registration failed');
             }
+
         } catch {
-            setMessage('Could not connect to backend');
+            setMessage('Please check your internet connection');
         }
+        setLoading(false);
     };
 
     // Send OTP
@@ -96,20 +119,21 @@ useEffect(() => {
             if (data.status === 'success') {
                 setUserId(data.userId);
                 setStep(3);
-                setMessage('OTP sent to your email.');
+                setPopupMessage('OTP sent to your email.');
                 setOtpTimer(60);
                 setResendAvailable(false);
             } else {
-                setMessage(data.message || 'Failed to send OTP');
+                setPopupMessage(data.message || 'Failed to send OTP');
             }
         } catch {
-            setMessage('Could not connect to backend');
+            setMessage('Please check your internet connection');
         }
     };
 
     // Verify OTP
     const handleVerifyOtp = async e => {
         e.preventDefault();
+        setLoading(true);
         try {
             const res = await fetch(`${process.env.REACT_APP_BGSBackend_URI}/api/verify-otp`, {
                 method: 'POST',
@@ -130,12 +154,19 @@ useEffect(() => {
                     setShowPopup(false);
                     setMessage('');
                 }, 5000);
+            } else {
+                // setMessage(data.message || 'OTP verification failed');
+                setShowPopup(true);
+                setTimeout(() => setShowPopup(false), 3000);
+                setForm(f => ({ ...f, otp: '' }));
             }
         } catch {
-            setMessage('Could not connect to backend');
+            // setMessage('please check your internet connection');
             setShowPopup(true);
             setTimeout(() => setShowPopup(false), 3000);
+            setForm(f => ({ ...f, otp: '' }));
         }
+        setLoading(false);
     };
     useEffect(() => {
         sessionStorage.setItem('step', step);
@@ -154,12 +185,61 @@ useEffect(() => {
         <div style={{
             minHeight: '100vh',
             width: '100vw',
-            background: 'linear-gradient(135deg, #f8fafc 0%, #e3ecf7 100%)',
+            background: step === 4 ? '#111' : 'linear-gradient(135deg, #f8fafc 0%, #e3ecf7 100%)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            position: 'relative'
+            position: 'relative',
+            backgroundImage: step === 4 ? 'none' : `url(${ganesh})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            transition: 'background 0.3s ease-in-out',
         }}>
+            {loading && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100vw',
+                    height: '100vh',
+                    background: 'rgba(255,255,255,0.7)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 9999,
+                    backdropFilter: 'blur(2px)'
+                }}>
+                    <div style={{
+                        padding: 32,
+                        borderRadius: 16,
+                        background: '#fff',
+                        boxShadow: '0 4px 24px rgba(0,0,0,0.12)',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center'
+                    }}>
+                        <div style={{
+                            border: '6px solid #f3f3f3',
+                            borderTop: '6px solid #457b9d',
+                            borderRadius: '50%',
+                            width: 48,
+                            height: 48,
+                            animation: 'spin 1s linear infinite',
+
+                        }} />
+                        <span style={{ marginTop: 18, fontWeight: 600, color: '#457b9d', fontSize: 18 }}>Loading...</span>
+                        <style>
+                            {`
+                @keyframes spin {
+                    0% { transform: rotate(0deg);}
+                    100% { transform: rotate(360deg);}
+                }
+                `}
+                        </style>
+                    </div>
+                </div>
+            )}
             {showPopup && (
                 <div style={{
                     position: 'fixed',
@@ -179,7 +259,7 @@ useEffect(() => {
                     zIndex: 9999,
                     boxShadow: '0 2px 8px #0002'
                 }}>
-                    {message}
+                    {popupMessage}
                 </div>
             )}
             <div style={{
@@ -265,40 +345,6 @@ useEffect(() => {
                             </div>
                         </>
                     )}
-                    {step === 2 && (
-                        <>
-                            <div style={{ marginBottom: 16 }}>
-                                <label>Email:</label>
-                                <input
-                                    type="email"
-                                    name="email"
-                                    value={form.email}
-                                    onChange={handleChange}
-                                    required
-                                    style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #bdbdbd' }}
-                                    disabled
-                                />
-                            </div>
-                            <div style={{ marginBottom: 16, marginLeft: 20 }}>
-                                <button
-                                    type="button"
-                                    style={{
-                                        width: '100%',
-                                        padding: 10,
-                                        background: '#457b9d',
-                                        color: '#fff',
-                                        border: 'none',
-                                        borderRadius: 6,
-                                        fontWeight: 'bold',
-                                        cursor: 'pointer'
-                                    }}
-                                    onClick={handleSendOtp}
-                                >
-                                    Send OTP
-                                </button>
-                            </div>
-                        </>
-                    )}
                     {step === 3 && (
                         <>
                             <div style={{ margin: '18px 0 10px 0' }}>
@@ -325,6 +371,7 @@ useEffect(() => {
                                 {resendAvailable ? (
                                     <button
                                         type="button"
+                                        value=''
                                         style={{
                                             width: '100%',
                                             padding: 10,
@@ -340,7 +387,7 @@ useEffect(() => {
                                         Resend OTP
                                     </button>
                                 ) : (
-                                    <span style={{ color: '#999' }}>Resend OTP in {otpTimer} seconds</span>
+                                    <span style={{ color: '#FFFFFF' }}>Resend OTP in {otpTimer} seconds</span>
                                 )}
                             </div>
                             {!resendAvailable && (
@@ -444,7 +491,7 @@ useEffect(() => {
                         </div>
                     )}
                 </form>
-                {message && <p style={{ marginTop: 16, color: message.includes('success') ? '#2e7d32' : '#d32f2f' }}>{message}</p>}
+                {/* {message && <p style={{ marginTop: 16, color: message.includes('success') ? '#2e7d32' : '#d32f2f' }}>{message}</p>} */}
             </div>
         </div>
     );
