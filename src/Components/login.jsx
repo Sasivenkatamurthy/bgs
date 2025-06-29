@@ -414,19 +414,15 @@ function Login() {
                         </>
                     )}
                     {step === 4 && (
-                        <div style={{ marginTop: 0, color: '#2e7d32', fontWeight: 700, width: '100vw', maxWidth: '100vw', padding: 0, marginLeft: 0, marginRight: 0, marginBottom: 0, height: '100vh' }}>
-                            {/* Display images in a grid */}
+                        <div style={{ marginTop: 0 }}>
                             <div
                                 style={{
                                     display: 'flex',
                                     flexWrap: 'wrap',
                                     gap: 16,
                                     justifyContent: 'center',
-                                    width: '100vw',
-                                    maxHeight: '100vh', // enables vertical scroll if many rows
-                                    // overflowY: 'auto',
+                                    width: '100%',
                                     boxSizing: 'border-box',
-                                    // padding: '0 2vw'
                                 }}
                             >
                                 {images.length > 0 ? (
@@ -435,12 +431,10 @@ function Login() {
                                             key={idx}
                                             style={{
                                                 position: 'relative',
-                                                width: '200px',
-                                                height: '600px',
-                                                flex: '0 0 calc(25% - 16px)', // 4 per row, minus gap
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center'
+                                                flex: '0 1 calc(25% - 16px)', // 4 per row
+                                                maxWidth: 'calc(25% - 16px)',
+                                                borderRadius: 8,
+                                                overflow: 'hidden',
                                             }}
                                             onMouseEnter={() => setHoveredIdx(idx)}
                                             onMouseLeave={() => setHoveredIdx(null)}
@@ -450,12 +444,10 @@ function Login() {
                                                 alt="User upload"
                                                 style={{
                                                     width: '100%',
-                                                    height: '100%',
+                                                    height: 'auto',
+                                                    display: 'block',
+                                                    aspectRatio: '3/4', // or remove if you want natural height
                                                     objectFit: 'cover',
-                                                    borderRadius: 8,
-                                                    marginBottom: 10,
-                                                    maxWidth: '100%',
-                                                    minWidth: 0
                                                 }}
                                             />
                                             {hoveredIdx === idx && (
@@ -475,11 +467,13 @@ function Login() {
                                                         color: '#fff',
                                                         cursor: 'pointer',
                                                         zIndex: 2,
-                                                        textDecoration: 'none'
+                                                        textDecoration: 'none',
+                                                        height:10,
+                                                        width:10,
                                                     }}
                                                     title="Download"
                                                 >
-                                                    <DownloadSimple size={24} weight="bold" />
+                                                    <DownloadSimple size={4} weight="bold" />
                                                 </a>
                                             )}
                                         </div>
@@ -488,8 +482,24 @@ function Login() {
                                     <div>No images uploaded yet.</div>
                                 )}
                             </div>
+
+                            <style>{`
+      @media (max-width: 900px) {
+        div[style*="flex-wrap"] > div {
+          flex: 0 1 calc(33.33% - 16px);
+          max-width: calc(33.33% - 16px);
+        }
+      }
+      @media (max-width: 600px) {
+        div[style*="flex-wrap"] > div {
+          flex: 0 1 calc(50% - 16px);
+          max-width: calc(50% - 16px);
+        }
+      }
+    `}</style>
                         </div>
                     )}
+
                 </form>
                 {/* {message && <p style={{ marginTop: 16, color: message.includes('success') ? '#2e7d32' : '#d32f2f' }}>{message}</p>} */}
             </div>

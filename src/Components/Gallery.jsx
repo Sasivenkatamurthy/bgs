@@ -13,12 +13,12 @@ function Gallery() {
 
   return (
     <div className="gallery-root">
-      <div className="gallery-grid">
+      <div className="masonry-grid">
         {images.length > 0 ? (
           images.map((img, idx) => (
             <div
               key={idx}
-              className="gallery-item"
+              className="masonry-item"
               onMouseEnter={() => setHoveredIdx(idx)}
               onMouseLeave={() => setHoveredIdx(null)}
             >
@@ -43,83 +43,76 @@ function Gallery() {
           <div>No images uploaded yet.</div>
         )}
       </div>
-      <style>
-        {`
-          .gallery-root {
-            min-height: 100vh;
-            width: 100vw;
-            background: #fafafa;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 0;
-          }
 
-          .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            width: 90vw;
-            max-width: 1400px;
-            margin: 0 auto;
-          }
+      <style>{`
+        .gallery-root {
+          min-height: 100vh;
+          width: 100vw;
+          background: #fafafa;
+          display: flex;
+          align-items: flex-start;
+          justify-content: center;
+          padding: 40px 0;
+        }
 
-          .gallery-item {
-            position: relative;
-            width: 100%;
-            background: #fff;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 2px 12px #0001;
-          }
+        .masonry-grid {
+          column-count: 3;
+          column-gap: 20px;
+          width: 90vw;
+          max-width: 1400px;
+        }
 
-          .gallery-img {
-            width: 100%;
-            height: auto;
-            max-height: 500px;
-            object-fit: cover;
-            display: block;
-            transition: transform 0.3s;
-          }
+        .masonry-item {
+          position: relative;
+          margin-bottom: 20px;
+          break-inside: avoid;
+          background: #fff;
+          border-radius: 10px;
+          overflow: hidden;
+          box-shadow: 0 2px 12px #0001;
+        }
 
-          .gallery-item:hover .gallery-img {
-            transform: scale(1.02);
-          }
+        .gallery-img {
+          width: 100%;
+          height: auto;
+          display: block;
+        }
 
-          .download-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.6);
-            border-radius: 50%;
-            padding: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            cursor: pointer;
-            z-index: 2;
-            text-decoration: none;
-          }
+        .masonry-item:hover .gallery-img {
+          transform: scale(1.02);
+          transition: transform 0.3s;
+        }
 
-          @media (max-width: 900px) {
-            .gallery-grid {
-              grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-              gap: 14px;
-            }
-          }
+        .download-btn {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          background: rgba(0,0,0,0.6);
+          border-radius: 50%;
+          padding: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #fff;
+          cursor: pointer;
+          z-index: 2;
+          text-decoration: none;
+        }
 
-          @media (max-width: 600px) {
-            .gallery-grid {
-              grid-template-columns: 1fr;
-              gap: 12px;
-            }
-            .gallery-img {
-              max-height: 300px;
-            }
+        @media (max-width: 900px) {
+          .masonry-grid {
+            column-count: 2;
+            column-gap: 16px;
           }
-        `}
-      </style>
+        }
+
+        @media (max-width: 600px) {
+          .masonry-grid {
+            column-count: 1;
+            column-gap: 0;
+          }
+        }
+      `}</style>
     </div>
   );
 }
